@@ -11,8 +11,8 @@ const App = () => {
 
     // Verificar si hay sesión iniciada al cargar la página
     useEffect(() => {
-        const isLogged = sessionStorage.getItem('isLogged');
-        if (isLogged === 'true') {
+        const sessionData = JSON.parse(sessionStorage.getItem("session"));
+        if (sessionData !== null && sessionData.isLogged === true) {
             setIsLoggedIn(true);
         }
     }, []);
@@ -23,7 +23,7 @@ const App = () => {
                 {isLoggedIn ? (
                     // Rutas protegidas para usuarios autenticados
                     <>
-                        <Route path="/home" element={<Todo />} />
+                        <Route path="/home" element={<Todo setIsLoggedIn={setIsLoggedIn} />} />
                         <Route path="/" element={<Navigate to="/home" />} />
                         <Route path="/register" element={<Navigate to="/home" />} />
                         <Route path="/login" element={<Navigate to="/home" />} />
@@ -31,8 +31,8 @@ const App = () => {
                 ) : (
                     // Rutas para usuarios no autenticados
                     <>
-                        <Route path="/" element={<Navigate to="/register" />} />
-                        <Route path="/home" element={<Navigate to="/register" />} />
+                        <Route path="/" element={<Navigate to="/login" />} />
+                        <Route path="/home" element={<Navigate to="/login" />} />
                         <Route path="/register" element={<Register setIsLoggedIn={setIsLoggedIn} />} />
                         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
                     </>

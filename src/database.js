@@ -61,7 +61,6 @@ export const login = (user, callback) => {
     // Buscar usuario por nombre de usuario
     const consult = query(usuariosRef, where('username', '==', user.username));
     getDocs(consult).then((snapshot) => {
-        console.log(snapshot)
         if (snapshot.empty) {
             const message = 'Credenciales incorrectas. Por favor, inténtalo de nuevo.';
             callback({ success: false, message });

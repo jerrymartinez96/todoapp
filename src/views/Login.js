@@ -6,27 +6,27 @@ import { login } from '../database';
 export const Login = ({ setIsLoggedIn }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [isLoading, setIsLoading] = useState(false); 
+    const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
 
     const handleSubmit = (event) => {
         event.preventDefault();
         setIsLoading(true);
-        
-        login({username, password}, (resp) => {
+
+        login({ username, password }, (resp) => {
             if (resp.success) {
                 // Si el usuario se creó exitosamente, se guarda información de la sesión en el almacenamiento del navegador
                 const sessionData = { isLogged: true, username };
                 sessionStorage.setItem("session", JSON.stringify(sessionData));
 
+                setIsLoggedIn(true);
+                navigate("/home");
                 // Muestra una notificación de éxito y redirige al usuario a la página de inicio
-                toast.success(resp.message, {
-                    onClose: () => {
-                        setIsLoggedIn(true);
-                        navigate("/home");
-                    },
-                });
+                // toast.success(resp.message, {
+                //     onClose: () => {
+                //     },
+                // });
             } else {
                 // Muestra una notificación de error si hubo algún problema al crear el usuario
                 toast.error(resp.message);
