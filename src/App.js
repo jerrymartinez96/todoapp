@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const App = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+    // Verificar si hay sesión iniciada al cargar la página
     useEffect(() => {
         const isLogged = sessionStorage.getItem('isLogged');
         if (isLogged === 'true') {
@@ -20,6 +21,7 @@ const App = () => {
         <div className="App">
             <Routes>
                 {isLoggedIn ? (
+                    // Rutas protegidas para usuarios autenticados
                     <>
                         <Route path="/home" element={<Todo />} />
                         <Route path="/" element={<Navigate to="/home" />} />
@@ -27,11 +29,12 @@ const App = () => {
                         <Route path="/login" element={<Navigate to="/home" />} />
                     </>
                 ) : (
+                    // Rutas para usuarios no autenticados
                     <>
                         <Route path="/" element={<Navigate to="/register" />} />
                         <Route path="/home" element={<Navigate to="/register" />} />
                         <Route path="/register" element={<Register setIsLoggedIn={setIsLoggedIn} />} />
-                        <Route path="/login" element={<Login  setIsLoggedIn={setIsLoggedIn} />} />
+                        <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
                     </>
                 )}
             </Routes>

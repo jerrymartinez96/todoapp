@@ -42,7 +42,7 @@ export const createUser = (data, callback) => {
         // Agregar nuevo usuario si no existe
         addDoc(usuariosRef, data)
             .then((docRef) => {
-                const message = `Usuario creado con el ID: ${docRef.id}`;
+                const message = `Usuario creado exitosamente`;
                 callback({ success: true, message });
             })
             .catch((error) => {
@@ -51,6 +51,42 @@ export const createUser = (data, callback) => {
             });
     }).catch((error) => {
         const message = `Ocurrió un error: ${error}`;
+        callback({ success: false, message });
+    });
+}
+
+export const login = (user, callback) => {
+    const usuariosRef = collection(db, 'usuarios');
+
+    // Buscar usuario por nombre de usuario
+    const consult = query(usuariosRef, where('username', '==', user.username));
+    getDocs(consult).then((snapshot) => {
+        console.log(snapshot)
+        if (snapshot.empty) {
+            const message = 'Credenciales incorrectas. Por favor, inténtalo de nuevo.';
+            callback({ success: false, message });
+            return;
+        }
+
+        // Comprobar la contraseña para cada documento encontrado
+        snapshot.forEach((doc) => {
+            const usuarioEncontrado = doc.data();
+            if (usuarioEncontrado.password === user.password) {
+                // Contraseña correcta, llamada de vuelta con éxito
+                callback({ success: true, message: 'Inicio de sesión exitoso.' });
+                return;
+            }else{
+                // Contraseña incorrecta
+                const message = 'Credenciales incorrectas. Por favor, inténtalo de nuevo.';
+                callback({ success: false, message });
+            }
+        });
+
+        
+    }).catch((error) => {
+        // Manejo de errores
+        console.error(error);
+        const message = 'Ocurrió un error al intentar iniciar sesión. Por favor, inténtalo de nuevo.';
         callback({ success: false, message });
     });
 }

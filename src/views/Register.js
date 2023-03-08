@@ -7,6 +7,8 @@ export const Register = ({ setIsLoggedIn }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false); 
+
     const navigate = useNavigate();
 
     const isValidForm = () => {
@@ -18,13 +20,21 @@ export const Register = ({ setIsLoggedIn }) => {
     };
 
     const handleSubmit = (event) => {
+        // Evita el comportamiento por defecto del formulario
         event.preventDefault();
-        if (!isValidForm()) return;
 
+        // Si el formulario no es válido, no hace nada
+        if (!isValidForm()) return;
+        setIsLoading(true);
+
+        // Crea un nuevo usuario con los datos del formulario
         createUser({ username, password }, (resp) => {
             if (resp.success) {
+                // Si el usuario se creó exitosamente, se guarda información de la sesión en el almacenamiento del navegador
                 const sessionData = { isLogged: true, username };
                 sessionStorage.setItem("session", JSON.stringify(sessionData));
+
+                // Muestra una notificación de éxito y redirige al usuario a la página de inicio
                 toast.success(resp.message, {
                     onClose: () => {
                         setIsLoggedIn(true);
@@ -32,7 +42,9 @@ export const Register = ({ setIsLoggedIn }) => {
                     },
                 });
             } else {
+                // Muestra una notificación de error si hubo algún problema al crear el usuario
                 toast.error(resp.message);
+                setIsLoading(false);
             }
         });
     };
@@ -111,8 +123,9 @@ export const Register = ({ setIsLoggedIn }) => {
                                 <button
                                     type="submit"
                                     className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    disabled={isLoading}
                                 >
-                                    Crear Cuenta
+                                    {isLoading ? "Creando cuenta..." : "Crear Cuenta"}
                                 </button>
                             </div>
                         </form>

@@ -1,13 +1,38 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { login } from '../database';
 
-export const Login = () => {
+export const Login = ({ setIsLoggedIn }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false); 
+
+    const navigate = useNavigate();
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log(`Username: ${username} Password: ${password}`);
+        setIsLoading(true);
+        
+        login({username, password}, (resp) => {
+            if (resp.success) {
+                // Si el usuario se creó exitosamente, se guarda información de la sesión en el almacenamiento del navegador
+                const sessionData = { isLogged: true, username };
+                sessionStorage.setItem("session", JSON.stringify(sessionData));
+
+                // Muestra una notificación de éxito y redirige al usuario a la página de inicio
+                toast.success(resp.message, {
+                    onClose: () => {
+                        setIsLoggedIn(true);
+                        navigate("/home");
+                    },
+                });
+            } else {
+                // Muestra una notificación de error si hubo algún problema al crear el usuario
+                toast.error(resp.message);
+                setIsLoading(false);
+            }
+        });
     };
 
     return (
@@ -65,8 +90,9 @@ export const Login = () => {
                             <button
                                 type="submit"
                                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                                disabled={isLoading}
                             >
-                                Iniciar Sesion
+                                {isLoading ? "Iniciando..." : "Iniciar Sesion"}
                             </button>
                         </div>
                     </form>
