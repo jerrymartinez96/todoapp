@@ -50,7 +50,7 @@ export const createUser = (data, callback) => {
                 callback({ success: false, message });
             });
     }).catch((error) => {
-        const message = `Ocurrió un error al buscar el usuario: ${error}`;
+        const message = `Ocurrió un error: ${error}`;
         callback({ success: false, message });
     });
 }
