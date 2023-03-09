@@ -143,9 +143,9 @@ export const getUserTasks = (username, callback) => {
     });
 }
 
-export const completeTask = (taskId, callback) => {
+export const completeTask = (taskId, completed, callback) => {
     const taskRef = doc(db, 'tareas', taskId);
-    updateDoc(taskRef, { completed: true })
+    updateDoc(taskRef, { completed: completed })
         .then(() => {
             const message = "Tarea completada exitosamente";
             callback({ success: true, message });

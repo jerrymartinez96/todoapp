@@ -22,15 +22,15 @@ export const Todo = ({ setIsLoggedIn }) => {
         });
     };
 
-    const handleCompleteTask = (taskId) => {
-        completeTask(taskId, ({ success, message }) => {
+    const handleCompleteTask = (taskId, completed) => {
+        completeTask(taskId, completed, ({ success, message }) => {
             if (success) {
                 // Actualizar la tarea completada en el estado
                 const updatedTasks = tasks.map((task) =>
-                    task.id === taskId ? { ...task, completed: true } : task
+                    task.id === taskId ? { ...task, completed: completed } : task
                 );
                 setTasks(updatedTasks);
-                toast.success(message);
+                // toast.success(message);
             } else {
                 toast.error(message);
             }
@@ -72,6 +72,7 @@ export const Todo = ({ setIsLoggedIn }) => {
     return (
         <>
             <Navbar setIsLoggedIn={setIsLoggedIn} />
+            <div style={{ height: "50px" }}></div>
             <div className="container mx-auto py-8">
                 <div className="w-full p-4 text-center bg-white border border-gray-200 shadow sm:p-8">
                     <TaskList

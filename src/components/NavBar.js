@@ -21,7 +21,7 @@ export const Navbar = ({ setIsLoggedIn }) => {
     }
 
     return (
-        <nav className="bg-white px-2 sm:px-4 py-2.5  py-3 px-4 flex justify-between items-center border-b border-gray-200">
+        <nav className="fixed top-0 z-50 w-full bg-white px-2 sm:px-4 py-2.5  py-3 px-4 flex justify-between items-center border-b border-gray-200">
             <a href="/" className="flex items-center text-blue-600">
                 <span className="font-bold text-lg">{username}</span>
             </a>
