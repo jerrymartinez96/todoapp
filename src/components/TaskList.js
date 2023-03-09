@@ -9,7 +9,7 @@ export const TaskList = ({ tasks, category, sortOrder }) => {
     // o la prioridad (de mayor a menor)
     const sortedTasks = filteredTasks.sort((task1, task2) =>
         sortOrder === "date"
-            ? new Date(task2.createdAt) - new Date(task1.createdAt)
+            ? task2.createdAt.toDate() - task1.createdAt.toDate()
             : task2.priority - task1.priority
     );
 

@@ -47,6 +47,7 @@ export const Todo = ({ setIsLoggedIn }) => {
         getUserTasks(username, (data) => {
             if(data.success){
                 setTasks(data.tasks);
+                // console.log(data.tasks);
             }else{
                 toast.error(data.message);
             }
