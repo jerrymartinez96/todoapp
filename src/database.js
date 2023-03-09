@@ -9,7 +9,7 @@ import {
     where,
     onSnapshot,
     updateDoc,
-    // deleteDoc,
+    deleteDoc,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -147,11 +147,24 @@ export const completeTask = (taskId, completed, callback) => {
     const taskRef = doc(db, 'tareas', taskId);
     updateDoc(taskRef, { completed: completed })
         .then(() => {
-            const message = "Tarea completada exitosamente";
+            const message = "Tarea completada";
             callback({ success: true, message });
         })
         .catch((error) => {
             const message = `Ocurrió un error al completar la tarea: ${error}`;
+            callback({ success: false, message });
+        });
+}
+
+export const deleteTask = (taskId, callback) => {
+    const taskRef = doc(db, 'tareas', taskId);
+    deleteDoc(taskRef)
+        .then(() => {
+            const message = "Tarea eliminada";
+            callback({ success: true, message });
+        })
+        .catch((error) => {
+            const message = `Ocurrió un error al eliminar la tarea: ${error}`;
             callback({ success: false, message });
         });
 }

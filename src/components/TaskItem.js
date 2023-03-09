@@ -1,10 +1,14 @@
 import React, { Fragment } from "react";
 import { Menu, Transition } from '@headlessui/react';
 
-export const TaskItem = ({ task, onCompleteTask }) => {
+export const TaskItem = ({ task, onCompleteTask, onDeleteTask}) => {
 
     const handleOnCheck = () => {
         onCompleteTask(task.id, !task.completed);
+    }
+
+    const handleDalete = () => {
+        onDeleteTask(task.id);
     }
     const priorityStyles = [
         "",
@@ -64,7 +68,7 @@ export const TaskItem = ({ task, onCompleteTask }) => {
                                     </button>
                                 </Menu.Item>
                                 <Menu.Item className="mt-3">
-                                    <button className='text-center bg-red-100 text-gray-600 hover:bg-red-500 hover:text-white w-full rounded-md px-2 py-2 text-sm'>
+                                    <button className='text-center bg-red-100 text-gray-600 hover:bg-red-500 hover:text-white w-full rounded-md px-2 py-2 text-sm' onClick={handleDalete}>
                                         Eliminar
                                     </button>
                                 </Menu.Item>

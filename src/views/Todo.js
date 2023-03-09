@@ -4,13 +4,29 @@ import { AddTaskModal } from "../components/AddTaskModal";
 import { FilterBar } from "../components/FilterBar";
 import { Navbar } from "../components/NavBar";
 import { TaskList } from "../components/TaskList";
-import { createTask, getUserTasks, completeTask } from "../database";
+import { createTask, getUserTasks, completeTask, deleteTask } from "../database";
 
 export const Todo = ({ setIsLoggedIn }) => {
     const [tasks, setTasks] = useState([]);
     const [category, setCategory] = useState("all");
     const [sortOrder, setSortOrder] = useState("date");
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleCategoryChange = (newCategory) => {
+        setCategory(newCategory);
+    };
+
+    const handleSortOrderChange = (newSortOrder) => {
+        setSortOrder(newSortOrder);
+    };
+
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
 
     const handleAddTask = (newTask) => {
         createTask(newTask, ({ success, message }) => {
@@ -37,20 +53,17 @@ export const Todo = ({ setIsLoggedIn }) => {
         });
     };
 
-    const handleCategoryChange = (newCategory) => {
-        setCategory(newCategory);
-    };
-
-    const handleSortOrderChange = (newSortOrder) => {
-        setSortOrder(newSortOrder);
-    };
-
-    const openModal = () => {
-        setIsModalOpen(true);
-    };
-
-    const closeModal = () => {
-        setIsModalOpen(false);
+    const handleDeleteTask = (taskId) => {
+        deleteTask(taskId, ({ success, message }) => {
+            if (success) {
+                // Eliminar la tarea del estado
+                // const updatedTasks = tasks.filter((task) => task.id !== taskId);
+                // setTasks(updatedTasks);
+                toast.success(message);
+            } else {
+                toast.error(message);
+            }
+        });
     };
 
     useEffect(() => {
@@ -80,6 +93,7 @@ export const Todo = ({ setIsLoggedIn }) => {
                         category={category}
                         sortOrder={sortOrder}
                         onCompleteTask={handleCompleteTask}
+                        onDeleteTask={handleDeleteTask}
                     />
                 </div>
             </div>
