@@ -8,6 +8,7 @@ import {
     // getDoc,
     query,
     where,
+    onSnapshot,
     // setDoc,
     // deleteDoc,
 } from "firebase/firestore";
@@ -74,14 +75,14 @@ export const login = (user, callback) => {
                 // Contraseña correcta, llamada de vuelta con éxito
                 callback({ success: true, message: 'Inicio de sesión exitoso.' });
                 return;
-            }else{
+            } else {
                 // Contraseña incorrecta
                 const message = 'Credenciales incorrectas. Por favor, inténtalo de nuevo.';
                 callback({ success: false, message });
             }
         });
 
-        
+
     }).catch((error) => {
         // Manejo de errores
         console.error(error);
@@ -89,3 +90,59 @@ export const login = (user, callback) => {
         callback({ success: false, message });
     });
 }
+
+export const createTask = (data, callback) => {
+    const tasksRef = collection(db, 'tareas');
+
+    // Verificar si la tarea existe
+    const consult = query(tasksRef, where('description', '==', data.description));
+    getDocs(consult).then((snapshot) => {
+        if (!snapshot.empty) {
+            const message = "La tarea ya existe";
+            callback({ success: false, message });
+            return;
+        }
+
+        // Agregar nueva tarea si no existe
+        const newTask = {
+            description: data.description,
+            username: data.username,
+            priority: data.priority || 1,
+            completed: false,
+            share: [],
+            createdAt: new Date(),
+        };
+
+        addDoc(tasksRef, newTask)
+            .then((docRef) => {
+                const message = "Tarea creada exitosamente";
+                callback({ success: true, message });
+            })
+            .catch((error) => {
+                const message = `Ocurrió un error al crear la tarea: ${error}`;
+                callback({ success: false, message });
+            });
+    }).catch((error) => {
+        const message = `Ocurrió un error: ${error}`;
+        callback({ success: false, message });
+    });
+}
+
+export const getUserTasks = (username, callback) => {
+    const tasksRef = collection(db, 'tareas');
+    const consult = query(tasksRef, where('username', '==', username));
+
+    onSnapshot(consult, (snapshot) => {
+        const tasks = [];
+        snapshot.forEach((doc) => {
+            tasks.push({ id: doc.id, ...doc.data() });
+        });
+        callback({ success: true, tasks });
+    }, (error) => {
+        const message = `Ocurrió un error: ${error}`;
+        callback({ success: false, message });
+    });
+}
+
+
+

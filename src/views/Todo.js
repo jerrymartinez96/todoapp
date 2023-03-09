@@ -1,55 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import { AddTaskModal } from "../components/AddTaskModal";
 import { FilterBar } from "../components/FilterBar";
 import { Navbar } from "../components/NavBar";
 import { TaskList } from "../components/TaskList";
-
-const initialTasks = [
-    {
-        id: 1,
-        description: "Configurar notificaciones en la app",
-        priority: 2,
-        completed: true,
-        createdAt: "2023-03-08",
-    },
-    {
-        id: 2,
-        description: "Cambiar estilos de toda la pagina",
-        priority: 1,
-        completed: true,
-        createdAt: "2023-03-07",
-    },
-    {
-        id: 3,
-        description: "Validar que solamente se pueda compartir tareas con usuarios creados",
-        priority: 2,
-        completed: false,
-        createdAt: "2023-03-06",
-    },
-    {
-        id: 4,
-        description: "Crear funcionalidad compartir tarea",
-        priority: 3,
-        completed: false,
-        createdAt: "2023-03-05",
-    },
-    {
-        id: 5,
-        description: "Mostrar numero de cuantos usuarios tienen compartida la tarea",
-        priority: 1,
-        completed: false,
-        createdAt: "2023-03-04",
-    },
-];
+import { createTask, getUserTasks } from "../database";
 
 export const Todo = ({ setIsLoggedIn }) => {
-    const [tasks, setTasks] = useState(initialTasks);
+    const [tasks, setTasks] = useState([]);
     const [category, setCategory] = useState("all");
     const [sortOrder, setSortOrder] = useState("date");
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleAddTask = (newTask) => {
-        setTasks([...tasks, newTask]);
+        createTask(newTask, ({ success, message }) => {
+            if (success) {
+                toast.success(message);
+            } else {
+                toast.error(message);
+            }
+        });
     };
 
     const handleCategoryChange = (newCategory) => {
@@ -68,11 +38,26 @@ export const Todo = ({ setIsLoggedIn }) => {
         setIsModalOpen(false);
     };
 
+    useEffect(() => {
+        const sessionData = JSON.parse(sessionStorage.getItem("session"));
+        let username = "";
+        if (sessionData !== null && sessionData.isLogged === true) {
+            username = sessionData.username;
+        }
+        getUserTasks(username, (data) => {
+            if(data.success){
+                setTasks(data.tasks);
+            }else{
+                toast.error(data.message);
+            }
+        });
+    }, []);
+
     return (
         <>
             <Navbar setIsLoggedIn={setIsLoggedIn} />
             <div className="container mx-auto py-8">
-                <div className="w-full p-4 text-center bg-white border border-gray-200 shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+                <div className="w-full p-4 text-center bg-white border border-gray-200 shadow sm:p-8">
                     <TaskList tasks={tasks} category={category} sortOrder={sortOrder} />
                 </div>
             </div>
@@ -91,4 +76,4 @@ export const Todo = ({ setIsLoggedIn }) => {
             />
         </>
     );
-}
+};

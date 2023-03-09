@@ -1,9 +1,10 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
 export function AddTaskModal({ isOpen, onClose, onAddTask }) {
     const [taskText, setTaskText] = useState('');
     const [priority, setPriority] = useState('1');
+    const [username, setUsername] = useState("");
 
     const handleTaskChange = (event) => {
         setTaskText(event.target.value);
@@ -17,6 +18,7 @@ export function AddTaskModal({ isOpen, onClose, onAddTask }) {
         event.preventDefault();
         const newTask = {
             id: Math.floor(Math.random() * 10000),
+            username: username,
             description: taskText,
             priority: parseInt(priority),
             completed: false,
@@ -27,6 +29,13 @@ export function AddTaskModal({ isOpen, onClose, onAddTask }) {
         setTaskText('');
         setPriority('1');
     };
+
+    useEffect(() => {
+        const sessionData = JSON.parse(sessionStorage.getItem("session"));
+        if (sessionData !== null && sessionData.isLogged === true) {
+            setUsername(sessionData.username);
+        }
+    }, []);
 
     return (
         <Transition appear show={isOpen} as={Fragment}>
@@ -63,21 +72,21 @@ export function AddTaskModal({ isOpen, onClose, onAddTask }) {
                                 </Dialog.Title>
                                 <form onSubmit={handleAddTask}>
                                     <div className="mb-4">
-                                        <label htmlFor="task" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tarea</label>
+                                        <label htmlFor="task" className="block mb-2 text-sm font-medium text-gray-900">Tarea</label>
                                         <textarea
                                             id="task"
                                             rows="3"
-                                            className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
                                             value={taskText}
                                             onChange={handleTaskChange}
                                         ></textarea>
                                     </div>
 
                                     <div className="mb-4">
-                                        <label htmlFor="priority" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Prioridad</label>
+                                        <label htmlFor="priority" className="block mb-2 text-sm font-medium text-gray-900">Prioridad</label>
                                         <select
                                             id="priority"
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                                             value={priority}
                                             onChange={handlePriorityChange}
                                         >
