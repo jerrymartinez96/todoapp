@@ -4,7 +4,7 @@ import { AddTaskModal } from "../components/AddTaskModal";
 import { FilterBar } from "../components/FilterBar";
 import { Navbar } from "../components/NavBar";
 import { TaskList } from "../components/TaskList";
-import { createTask, getUserTasks } from "../database";
+import { createTask, getUserTasks, completeTask } from "../database";
 
 export const Todo = ({ setIsLoggedIn }) => {
     const [tasks, setTasks] = useState([]);
@@ -15,6 +15,21 @@ export const Todo = ({ setIsLoggedIn }) => {
     const handleAddTask = (newTask) => {
         createTask(newTask, ({ success, message }) => {
             if (success) {
+                toast.success(message);
+            } else {
+                toast.error(message);
+            }
+        });
+    };
+
+    const handleCompleteTask = (taskId) => {
+        completeTask(taskId, ({ success, message }) => {
+            if (success) {
+                // Actualizar la tarea completada en el estado
+                const updatedTasks = tasks.map((task) =>
+                    task.id === taskId ? { ...task, completed: true } : task
+                );
+                setTasks(updatedTasks);
                 toast.success(message);
             } else {
                 toast.error(message);
@@ -45,10 +60,10 @@ export const Todo = ({ setIsLoggedIn }) => {
             username = sessionData.username;
         }
         getUserTasks(username, (data) => {
-            if(data.success){
+            if (data.success) {
                 setTasks(data.tasks);
                 // console.log(data.tasks);
-            }else{
+            } else {
                 toast.error(data.message);
             }
         });
@@ -59,7 +74,12 @@ export const Todo = ({ setIsLoggedIn }) => {
             <Navbar setIsLoggedIn={setIsLoggedIn} />
             <div className="container mx-auto py-8">
                 <div className="w-full p-4 text-center bg-white border border-gray-200 shadow sm:p-8">
-                    <TaskList tasks={tasks} category={category} sortOrder={sortOrder} />
+                    <TaskList
+                        tasks={tasks}
+                        category={category}
+                        sortOrder={sortOrder}
+                        onCompleteTask={handleCompleteTask}
+                    />
                 </div>
             </div>
             <div style={{ height: "100px" }}></div>

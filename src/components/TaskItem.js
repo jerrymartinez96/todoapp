@@ -1,6 +1,6 @@
 import React from "react";
 
-export const TaskItem = ({ task }) => {
+export const TaskItem = ({ task, onCompleteTask }) => {
     const priorityStyles = [
         "",
         "p-4 mb-4 text-blue-800 border border-blue-300 rounded-lg bg-blue-50",
@@ -26,7 +26,12 @@ export const TaskItem = ({ task }) => {
                 {task.completed ?
                     "Completada"
                     :
-                    <button type="button" className="text-gray-800 bg-transparent border border-gray-700 hover:bg-gray-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center" data-dismiss-target="#alert-additional-content-1" aria-label="Close">
+                    <button
+                        type="button"
+                        className="text-gray-800 bg-transparent border border-gray-700 hover:bg-gray-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center"
+                        data-dismiss-target="#alert-additional-content-1" aria-label="Close"
+                        onClick={() => onCompleteTask(task.id)}
+                    >
                         Completar
                     </button>
                 }

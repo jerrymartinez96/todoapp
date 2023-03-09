@@ -4,12 +4,11 @@ import {
     collection,
     addDoc,
     getDocs,
-    // doc,
-    // getDoc,
+    doc,
     query,
     where,
     onSnapshot,
-    // setDoc,
+    updateDoc,
     // deleteDoc,
 } from "firebase/firestore";
 
@@ -144,5 +143,17 @@ export const getUserTasks = (username, callback) => {
     });
 }
 
+export const completeTask = (taskId, callback) => {
+    const taskRef = doc(db, 'tareas', taskId);
+    updateDoc(taskRef, { completed: true })
+        .then(() => {
+            const message = "Tarea completada exitosamente";
+            callback({ success: true, message });
+        })
+        .catch((error) => {
+            const message = `Ocurrió un error al completar la tarea: ${error}`;
+            callback({ success: false, message });
+        });
+}
 
 
