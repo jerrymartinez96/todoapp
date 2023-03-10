@@ -5,7 +5,7 @@ import { FilterBar } from "../components/FilterBar";
 import { Navbar } from "../components/NavBar";
 import { ShareTask } from "../components/ShareTask";
 import { TaskList } from "../components/TaskList";
-import { createTask, getUserTasks, completeTask, deleteTask, updateTask } from "../database";
+import { createTask, getUserTasks, completeTask, deleteTask, updateTask, shareTask } from "../database";
 
 export const Todo = ({ setIsLoggedIn }) => {
     const [tasks, setTasks] = useState([]);
@@ -15,6 +15,7 @@ export const Todo = ({ setIsLoggedIn }) => {
     const [isModalShareOpen, setIsModalShareOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [taskEdit, setTaskEdit] = useState({});
+    const [taskShare, setTaskShare] = useState({});
 
     const handleCategoryChange = (newCategory) => {
         setCategory(newCategory);
@@ -29,15 +30,15 @@ export const Todo = ({ setIsLoggedIn }) => {
     };
 
     const shareModal = (task) => {
+        setTaskShare(task);
         setIsModalShareOpen(true);
-        console.log(task)
     }
-    
+
     const openModalEdit = (task) => {
         setTaskEdit(task);
         setIsEditing(true);
         setIsModalOpen(true);
-    } 
+    }
 
     const closeModal = () => {
         setIsModalOpen(false);
@@ -87,13 +88,24 @@ export const Todo = ({ setIsLoggedIn }) => {
     const handleDeleteTask = (taskId) => {
         deleteTask(taskId, ({ success, message }) => {
             if (success) {
-                // Eliminar la tarea del estado
                 toast.success(message);
             } else {
                 toast.error(message);
             }
         });
     };
+
+    const handleShareTask = (task, newUserShare) => {
+        const shareArray = task.share.concat(newUserShare);
+
+        shareTask(task.id, shareArray, ({ success, message }) => {
+            if (success) {
+                toast.success(message);
+            } else {
+                toast.error(message);
+            }
+        });
+    }
 
     useEffect(() => {
         const sessionData = JSON.parse(sessionStorage.getItem("session"));
@@ -145,8 +157,10 @@ export const Todo = ({ setIsLoggedIn }) => {
                 onUpdateTask={handleUpdateTask}
             />
             <ShareTask
+                task={taskShare}
                 isOpen={isModalShareOpen}
                 onClose={shareModalClose}
+                onShared={handleShareTask}
             />
         </>
     );

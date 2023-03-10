@@ -226,7 +226,7 @@ export const shareTask = (taskId, sharedUsers, callback) => {
             }
 
             // Actualizar la tarea con los nuevos usuarios compartidos
-            updateDoc(taskRef, { sharedUsers })
+            updateDoc(taskRef, { share: sharedUsers })
                 .then(() => {
                     const message = "Tarea compartida exitosamente";
                     callback({ success: true, message });
