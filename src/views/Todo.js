@@ -4,13 +4,15 @@ import { AddTaskModal } from "../components/AddTaskModal";
 import { FilterBar } from "../components/FilterBar";
 import { Navbar } from "../components/NavBar";
 import { TaskList } from "../components/TaskList";
-import { createTask, getUserTasks, completeTask, deleteTask } from "../database";
+import { createTask, getUserTasks, completeTask, deleteTask, updateTask } from "../database";
 
 export const Todo = ({ setIsLoggedIn }) => {
     const [tasks, setTasks] = useState([]);
     const [category, setCategory] = useState("all");
     const [sortOrder, setSortOrder] = useState("date");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [taskEdit, setTaskEdit] = useState({});
 
     const handleCategoryChange = (newCategory) => {
         setCategory(newCategory);
@@ -23,10 +25,18 @@ export const Todo = ({ setIsLoggedIn }) => {
     const openModal = () => {
         setIsModalOpen(true);
     };
+    
+    const openModalEdit = (task) => {
+        setTaskEdit(task);
+        setIsEditing(true);
+        setIsModalOpen(true);
+    } 
 
     const closeModal = () => {
         setIsModalOpen(false);
+        setIsEditing(false);
     };
+
 
     const handleAddTask = (newTask) => {
         createTask(newTask, ({ success, message }) => {
@@ -53,12 +63,20 @@ export const Todo = ({ setIsLoggedIn }) => {
         });
     };
 
+    const handleUpdateTask = (taskId, updatedTask) => {
+        updateTask(taskId, updatedTask, ({ success, message }) => {
+            if (success) {
+                toast.success(message);
+            } else {
+                toast.error(message);
+            }
+        });
+    };
+
     const handleDeleteTask = (taskId) => {
         deleteTask(taskId, ({ success, message }) => {
             if (success) {
                 // Eliminar la tarea del estado
-                // const updatedTasks = tasks.filter((task) => task.id !== taskId);
-                // setTasks(updatedTasks);
                 toast.success(message);
             } else {
                 toast.error(message);
@@ -94,6 +112,7 @@ export const Todo = ({ setIsLoggedIn }) => {
                         sortOrder={sortOrder}
                         onCompleteTask={handleCompleteTask}
                         onDeleteTask={handleDeleteTask}
+                        UpdateTask={openModalEdit}
                     />
                 </div>
             </div>
@@ -106,9 +125,12 @@ export const Todo = ({ setIsLoggedIn }) => {
                 onSortOrderChange={handleSortOrderChange}
             />
             <AddTaskModal
+                task={taskEdit}
                 isOpen={isModalOpen}
+                isEditing={isEditing}
                 onClose={closeModal}
                 onAddTask={handleAddTask}
+                onUpdateTask={handleUpdateTask}
             />
         </>
     );

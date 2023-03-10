@@ -3,6 +3,7 @@ import {
     getFirestore,
     collection,
     addDoc,
+    getDoc,
     getDocs,
     doc,
     query,
@@ -169,4 +170,38 @@ export const deleteTask = (taskId, callback) => {
         });
 }
 
+export const updateTask = (id, data, callback) => {
+    const taskRef = doc(db, 'tareas', id);
 
+    // Verificar si la tarea existe
+    getDoc(taskRef).then((doc) => {
+        if (!doc.exists()) {
+            const message = "La tarea no existe";
+            callback({ success: false, message });
+            return;
+        }
+
+        // Actualizar tarea existente
+        const updatedTask = {
+            description: data.description || doc.data().description,
+            username: data.username || doc.data().username,
+            priority: data.priority || doc.data().priority,
+            completed: data.completed || doc.data().completed,
+            share: data.share || doc.data().share,
+            createdAt: doc.data().createdAt,
+        };
+
+        updateDoc(taskRef, updatedTask)
+            .then(() => {
+                const message = "Tarea actualizada exitosamente";
+                callback({ success: true, message });
+            })
+            .catch((error) => {
+                const message = `Ocurrió un error al actualizar la tarea: ${error}`;
+                callback({ success: false, message });
+            });
+    }).catch((error) => {
+        const message = `Ocurrió un error: ${error}`;
+        callback({ success: false, message });
+    });
+};

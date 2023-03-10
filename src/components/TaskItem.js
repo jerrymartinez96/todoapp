@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import { Menu, Transition } from '@headlessui/react';
 
-export const TaskItem = ({ task, onCompleteTask, onDeleteTask}) => {
+export const TaskItem = ({ task, onCompleteTask, onDeleteTask, onEditTask }) => {
 
     const handleOnCheck = () => {
         onCompleteTask(task.id, !task.completed);
@@ -10,6 +10,11 @@ export const TaskItem = ({ task, onCompleteTask, onDeleteTask}) => {
     const handleDalete = () => {
         onDeleteTask(task.id);
     }
+
+    const handleEdit = () => {
+        onEditTask(task);
+    }
+
     const priorityStyles = [
         "",
         "flex p-4 mb-4 text-blue-800 border-t-4 border-blue-300 bg-blue-50",
@@ -63,12 +68,18 @@ export const TaskItem = ({ task, onCompleteTask, onDeleteTask}) => {
                                     </div>
                                 </Menu.Item>
                                 <Menu.Item className="mt-3">
-                                    <button className='text-center bg-blue-100 text-gray-600 hover:bg-blue-500 hover:text-white w-full rounded-md px-2 py-2 text-sm'>
+                                    <button
+                                        className='text-center bg-blue-100 text-gray-600 hover:bg-blue-500 hover:text-white w-full rounded-md px-2 py-2 text-sm'
+                                        onClick={handleEdit}
+                                    >
                                         Editar
                                     </button>
                                 </Menu.Item>
                                 <Menu.Item className="mt-3">
-                                    <button className='text-center bg-red-100 text-gray-600 hover:bg-red-500 hover:text-white w-full rounded-md px-2 py-2 text-sm' onClick={handleDalete}>
+                                    <button
+                                        className='text-center bg-red-100 text-gray-600 hover:bg-red-500 hover:text-white w-full rounded-md px-2 py-2 text-sm'
+                                        onClick={handleDalete}
+                                    >
                                         Eliminar
                                     </button>
                                 </Menu.Item>

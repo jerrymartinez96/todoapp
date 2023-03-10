@@ -1,10 +1,12 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
-export function AddTaskModal({ isOpen, onClose, onAddTask }) {
+export function AddTaskModal({ task, isOpen, onClose, onAddTask, onUpdateTask, isEditing }) {
+    const [taskID, setTaskID] = useState('');
     const [taskText, setTaskText] = useState('');
     const [priority, setPriority] = useState('1');
-    const [username, setUsername] = useState("");
+    const [username, setUsername] = useState('');
+
 
     const handleTaskChange = (event) => {
         setTaskText(event.target.value);
@@ -16,26 +18,38 @@ export function AddTaskModal({ isOpen, onClose, onAddTask }) {
 
     const handleAddTask = (event) => {
         event.preventDefault();
-        const newTask = {
-            id: Math.floor(Math.random() * 10000),
-            username: username,
-            description: taskText,
-            priority: parseInt(priority),
-            completed: false,
-            createdAt: new Date().toISOString().slice(0, 10),
-        };
-        onAddTask(newTask);
-        onClose();
-        setTaskText('');
-        setPriority('1');
+        if(isEditing){
+            onUpdateTask(taskID, {description: taskText, priority});
+            onClose();
+            setTaskID('');
+            setTaskText('');
+            setPriority('1');
+        }else{
+            const newTask = {
+                username: username,
+                description: taskText,
+                priority: parseInt(priority),
+                completed: false,
+                createdAt: new Date().toISOString().slice(0, 10),
+            };
+            onAddTask(newTask);
+            onClose();
+            setTaskText('');
+            setPriority('1');
+        }
     };
 
     useEffect(() => {
+        if(isEditing){
+            setTaskID(task.id);
+            setTaskText(task.description);
+            setPriority(task.priority);
+        }
         const sessionData = JSON.parse(sessionStorage.getItem("session"));
         if (sessionData !== null && sessionData.isLogged === true) {
             setUsername(sessionData.username);
         }
-    }, []);
+    }, [isEditing, task]);
 
     return (
         <Transition appear show={isOpen} as={Fragment}>
@@ -68,7 +82,7 @@ export function AddTaskModal({ isOpen, onClose, onAddTask }) {
                                     as="h3"
                                     className="text-lg text-center font-medium leading-6 text-gray-900"
                                 >
-                                    Agregar nueva tarea
+                                    {isEditing? "Editar tarea" : "Agregar nueva tarea"}
                                 </Dialog.Title>
                                 <form onSubmit={handleAddTask}>
                                     <div className="mb-4">
@@ -108,7 +122,7 @@ export function AddTaskModal({ isOpen, onClose, onAddTask }) {
                                             type="submit"
                                             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
                                         >
-                                            Agregar
+                                            {isEditing? "Editar" : "Agregar"}
                                         </button>
                                     </div>
                                 </form>
