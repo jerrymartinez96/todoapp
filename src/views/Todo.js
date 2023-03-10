@@ -16,6 +16,7 @@ export const Todo = ({ setIsLoggedIn }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [taskEdit, setTaskEdit] = useState({});
     const [taskShare, setTaskShare] = useState({});
+    const [tasksChange, setTasksChange] = useState(false);
 
     const handleCategoryChange = (newCategory) => {
         setCategory(newCategory);
@@ -53,7 +54,11 @@ export const Todo = ({ setIsLoggedIn }) => {
     const handleAddTask = (newTask) => {
         createTask(newTask, ({ success, message }) => {
             if (success) {
-                toast.success(message);
+                toast.success(message, {
+                    onClose: () => {
+                        setTasksChange(!tasksChange);
+                    },
+                });
             } else {
                 toast.error(message);
             }
@@ -78,7 +83,11 @@ export const Todo = ({ setIsLoggedIn }) => {
     const handleUpdateTask = (taskId, updatedTask) => {
         updateTask(taskId, updatedTask, ({ success, message }) => {
             if (success) {
-                toast.success(message);
+                toast.success(message, {
+                    onClose: () => {
+                        setTasksChange(!tasksChange);
+                    },
+                });
             } else {
                 toast.error(message);
             }
@@ -88,7 +97,11 @@ export const Todo = ({ setIsLoggedIn }) => {
     const handleDeleteTask = (taskId) => {
         deleteTask(taskId, ({ success, message }) => {
             if (success) {
-                toast.success(message);
+                toast.success(message, {
+                    onClose: () => {
+                        setTasksChange(!tasksChange);
+                    },
+                });
             } else {
                 toast.error(message);
             }
@@ -100,7 +113,11 @@ export const Todo = ({ setIsLoggedIn }) => {
 
         shareTask(task.id, shareArray, ({ success, message }) => {
             if (success) {
-                toast.success(message);
+                toast.success(message, {
+                    onClose: () => {
+                        setTasksChange(!tasksChange);
+                    },
+                });
             } else {
                 toast.error(message);
             }
@@ -121,7 +138,7 @@ export const Todo = ({ setIsLoggedIn }) => {
                 toast.error(data.message);
             }
         });
-    }, []);
+    }, [tasksChange]);
 
     return (
         <>

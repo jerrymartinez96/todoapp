@@ -35,12 +35,12 @@ export const Register = ({ setIsLoggedIn }) => {
                 sessionStorage.setItem("session", JSON.stringify(sessionData));
 
                 // Muestra una notificación de éxito y redirige al usuario a la página de inicio
-                toast.success(resp.message, {
-                    onClose: () => {
-                        setIsLoggedIn(true);
-                        navigate("/home");
-                    },
-                });
+                setIsLoggedIn(true);
+                navigate("/home");
+                // toast.success(resp.message, {
+                //     onClose: () => {
+                //     },
+                // });
             } else {
                 // Muestra una notificación de error si hubo algún problema al crear el usuario
                 toast.error(resp.message);

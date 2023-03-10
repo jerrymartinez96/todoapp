@@ -8,7 +8,7 @@ import {
     doc,
     query,
     where,
-    onSnapshot,
+    // onSnapshot,
     updateDoc,
     deleteDoc,
 } from "firebase/firestore";
@@ -130,19 +130,21 @@ export const createTask = (data, callback) => {
 
 export const getUserTasks = (username, callback) => {
     const tasksRef = collection(db, 'tareas');
-    const consult = query(tasksRef, where('username', '==', username));
+    const query1 = query(tasksRef, where('username', '==', username));
+    const query2 = query(tasksRef, where('share', 'array-contains', username));
 
-    onSnapshot(consult, (snapshot) => {
-        const tasks = [];
-        snapshot.forEach((doc) => {
-            tasks.push({ id: doc.id, ...doc.data() });
+    Promise.all([getDocs(query1), getDocs(query2)])
+        .then((querySnapshots) => {
+            const tasks1 = querySnapshots[0].docs.map((doc) => ({ id: doc.id, shared: false, ...doc.data() }));
+            const tasks2 = querySnapshots[1].docs.map((doc) => ({ id: doc.id, shared: true, ...doc.data() }));
+            const mergedTasks = [...tasks1, ...tasks2].filter((task, index, self) => index === self.findIndex((t) => t.id === task.id));
+            callback({ success: true, tasks: mergedTasks });
+        })
+        .catch((error) => {
+            const message = `Ocurrió un error: ${error}`;
+            callback({ success: false, message });
         });
-        callback({ success: true, tasks });
-    }, (error) => {
-        const message = `Ocurrió un error: ${error}`;
-        callback({ success: false, message });
-    });
-}
+};
 
 export const completeTask = (taskId, completed, callback) => {
     const taskRef = doc(db, 'tareas', taskId);

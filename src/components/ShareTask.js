@@ -19,7 +19,6 @@ export function ShareTask({ task, isOpen, onClose, onShared }) {
                 toast.warning("Para compartir la tarea agrega un usuario diferente al tuyo");
                 setIsSearching(false);
             } else {
-                console.log(task.share)
                 if (task.share.includes(username)) {
                     toast.warning(`Ya compartiste la tarea con el usuario ${username} anteriormente`);
                     setIsSearching(false);

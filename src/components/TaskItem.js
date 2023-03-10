@@ -36,7 +36,16 @@ export const TaskItem = ({ task, onCompleteTask, onDeleteTask, onEditTask, onSha
 
     return (
         <div id="alert-border-1" className={`${priorityStyles[task.priority]} ${priorityClass}`} role="alert">
-            <div className={`ml-3 text-sm font-medium ${task.completed ? "line-through" : ""}`}>{task.description}</div>
+            <div className={`ml-3 font-medium ${task.completed ? "line-through" : ""}`}>
+                <span className=" text-sm">{task.description}</span>
+                {task.shared ?
+                    <>
+                        <br />
+                        <span className="text-xs">{`${task.username} te ha compartido esta tarea`}</span>
+                    </>
+                    : ""
+                }
+            </div>
             <div className="ml-auto h-8 w-8">
                 <Menu as="div" className="relative inline-block text-left">
                     <div>
@@ -71,7 +80,7 @@ export const TaskItem = ({ task, onCompleteTask, onDeleteTask, onEditTask, onSha
                                         </label>
                                     </div>
                                 </Menu.Item>
-                                <Menu.Item className="mt-3">
+                                <Menu.Item className={`mt-3 ${task.shared ? "hidden" : ""}`}>
                                     <button
                                         className='text-center bg-green-200 text-gray-800 hover:bg-green-500 hover:text-white w-full rounded-md px-2 py-2 text-sm'
                                         onClick={handleShare}
@@ -79,7 +88,7 @@ export const TaskItem = ({ task, onCompleteTask, onDeleteTask, onEditTask, onSha
                                         Compartir
                                     </button>
                                 </Menu.Item>
-                                <Menu.Item className="mt-3">
+                                <Menu.Item className={`mt-3 ${task.shared ? "hidden" : ""}`}>
                                     <button
                                         className='text-center bg-blue-200 text-gray-800 hover:bg-blue-500 hover:text-white w-full rounded-md px-2 py-2 text-sm'
                                         onClick={handleEdit}
@@ -87,7 +96,7 @@ export const TaskItem = ({ task, onCompleteTask, onDeleteTask, onEditTask, onSha
                                         Editar
                                     </button>
                                 </Menu.Item>
-                                <Menu.Item className="mt-3">
+                                <Menu.Item className={`mt-3 ${task.shared ? "hidden" : ""}`}>
                                     <button
                                         className='text-center bg-red-200 text-gray-800 hover:bg-red-500 hover:text-white w-full rounded-md px-2 py-2 text-sm'
                                         onClick={handleDalete}
