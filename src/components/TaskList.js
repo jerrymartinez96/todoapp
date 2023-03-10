@@ -1,7 +1,7 @@
 import React from "react";
 import { TaskItem } from "./TaskItem";
 
-export const TaskList = ({ tasks, category, sortOrder, onCompleteTask, onDeleteTask, UpdateTask }) => {
+export const TaskList = ({ tasks, category, sortOrder, onCompleteTask, onDeleteTask, UpdateTask, shareTask }) => {
     // Filtrar las tareas en función de la categoría seleccionada (todas, completadas o pendientes)
     const filteredTasks = category === "all" ? tasks : tasks.filter((task) => task.completed === (category === "completed"));
 
@@ -23,6 +23,7 @@ export const TaskList = ({ tasks, category, sortOrder, onCompleteTask, onDeleteT
                     onCompleteTask={onCompleteTask}
                     onDeleteTask={onDeleteTask}
                     onEditTask={UpdateTask}
+                    onShare={shareTask}
                 />
             ))}
         </>

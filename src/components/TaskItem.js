@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import { Menu, Transition } from '@headlessui/react';
 
-export const TaskItem = ({ task, onCompleteTask, onDeleteTask, onEditTask }) => {
+export const TaskItem = ({ task, onCompleteTask, onDeleteTask, onEditTask, onShare }) => {
 
     const handleOnCheck = () => {
         onCompleteTask(task.id, !task.completed);
@@ -13,6 +13,10 @@ export const TaskItem = ({ task, onCompleteTask, onDeleteTask, onEditTask }) => 
 
     const handleEdit = () => {
         onEditTask(task);
+    }
+
+    const handleShare = () => {
+        onShare(task);
     }
 
     const priorityStyles = [
@@ -69,7 +73,15 @@ export const TaskItem = ({ task, onCompleteTask, onDeleteTask, onEditTask }) => 
                                 </Menu.Item>
                                 <Menu.Item className="mt-3">
                                     <button
-                                        className='text-center bg-blue-100 text-gray-600 hover:bg-blue-500 hover:text-white w-full rounded-md px-2 py-2 text-sm'
+                                        className='text-center bg-green-200 text-gray-800 hover:bg-green-500 hover:text-white w-full rounded-md px-2 py-2 text-sm'
+                                        onClick={handleShare}
+                                    >
+                                        Compartir
+                                    </button>
+                                </Menu.Item>
+                                <Menu.Item className="mt-3">
+                                    <button
+                                        className='text-center bg-blue-200 text-gray-800 hover:bg-blue-500 hover:text-white w-full rounded-md px-2 py-2 text-sm'
                                         onClick={handleEdit}
                                     >
                                         Editar
@@ -77,7 +89,7 @@ export const TaskItem = ({ task, onCompleteTask, onDeleteTask, onEditTask }) => 
                                 </Menu.Item>
                                 <Menu.Item className="mt-3">
                                     <button
-                                        className='text-center bg-red-100 text-gray-600 hover:bg-red-500 hover:text-white w-full rounded-md px-2 py-2 text-sm'
+                                        className='text-center bg-red-200 text-gray-800 hover:bg-red-500 hover:text-white w-full rounded-md px-2 py-2 text-sm'
                                         onClick={handleDalete}
                                     >
                                         Eliminar

@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { AddTaskModal } from "../components/AddTaskModal";
 import { FilterBar } from "../components/FilterBar";
 import { Navbar } from "../components/NavBar";
+import { ShareTask } from "../components/ShareTask";
 import { TaskList } from "../components/TaskList";
 import { createTask, getUserTasks, completeTask, deleteTask, updateTask } from "../database";
 
@@ -11,6 +12,7 @@ export const Todo = ({ setIsLoggedIn }) => {
     const [category, setCategory] = useState("all");
     const [sortOrder, setSortOrder] = useState("date");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalShareOpen, setIsModalShareOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [taskEdit, setTaskEdit] = useState({});
 
@@ -25,6 +27,11 @@ export const Todo = ({ setIsLoggedIn }) => {
     const openModal = () => {
         setIsModalOpen(true);
     };
+
+    const shareModal = (task) => {
+        setIsModalShareOpen(true);
+        console.log(task)
+    }
     
     const openModalEdit = (task) => {
         setTaskEdit(task);
@@ -36,6 +43,10 @@ export const Todo = ({ setIsLoggedIn }) => {
         setIsModalOpen(false);
         setIsEditing(false);
     };
+
+    const shareModalClose = () => {
+        setIsModalShareOpen(false);
+    }
 
 
     const handleAddTask = (newTask) => {
@@ -113,6 +124,7 @@ export const Todo = ({ setIsLoggedIn }) => {
                         onCompleteTask={handleCompleteTask}
                         onDeleteTask={handleDeleteTask}
                         UpdateTask={openModalEdit}
+                        shareTask={shareModal}
                     />
                 </div>
             </div>
@@ -131,6 +143,10 @@ export const Todo = ({ setIsLoggedIn }) => {
                 onClose={closeModal}
                 onAddTask={handleAddTask}
                 onUpdateTask={handleUpdateTask}
+            />
+            <ShareTask
+                isOpen={isModalShareOpen}
+                onClose={shareModalClose}
             />
         </>
     );

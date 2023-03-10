@@ -205,3 +205,39 @@ export const updateTask = (id, data, callback) => {
         callback({ success: false, message });
     });
 };
+
+export const shareTask = (taskId, sharedUsers, callback) => {
+    const taskRef = doc(db, 'tareas', taskId);
+
+    // Obtener el documento actual de la tarea
+    getDoc(taskRef)
+        .then((doc) => {
+            if (!doc.exists()) {
+                const message = "La tarea no existe";
+                callback({ success: false, message });
+                return;
+            }
+
+            // Verificar si el campo sharedUsers tiene cambios
+            if (JSON.stringify(doc.data().sharedUsers) === JSON.stringify(sharedUsers)) {
+                const message = "No se realizaron cambios en los usuarios compartidos";
+                callback({ success: true, message });
+                return;
+            }
+
+            // Actualizar la tarea con los nuevos usuarios compartidos
+            updateDoc(taskRef, { sharedUsers })
+                .then(() => {
+                    const message = "Tarea compartida exitosamente";
+                    callback({ success: true, message });
+                })
+                .catch((error) => {
+                    const message = `Ocurrió un error al compartir la tarea: ${error}`;
+                    callback({ success: false, message });
+                });
+        })
+        .catch((error) => {
+            const message = `Ocurrió un error: ${error}`;
+            callback({ success: false, message });
+        });
+};
